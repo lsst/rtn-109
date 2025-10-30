@@ -1,0 +1,23 @@
+[technote]
+id = "RTN-109"
+series_id = "RTN"
+canonical_url = "https://rtn-109.lsst.io"
+github_url = "https://github.com/lsst/rtn-109"
+github_default_branch = "main"
+date_created = 2025-10-30T20:22:43Z
+organization.name = "NSF-DOE Vera C. Rubin Observatory"
+organization.ror = "https://ror.org/048g3cy84"
+license.id = "CC-BY-4.0"
+
+[technote.status]
+state = "draft"
+
+[[technote.authors]]
+name.given = "James"
+name.family = "Chiang"
+internal_id = "chiangj"
+orcid = "https://orcid.org/0000-0001-5738-8956"
+[[technote.authors.affiliations]]
+name = "SLAC National Accelerator Laboratory"
+internal_id = "SLAC-Kavli"
+address = "Menlo Park"
