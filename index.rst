@@ -27,7 +27,7 @@ For tasks that do not have significant scaling dependence, we simply use the mea
 
 **Figure 1**: CPU time and memory usage for ``isr``, ``calibrateImage``, ``makeDirectWarp``, and ``makePsfMatchedWarp`` tasks in DM-52836.  The red dashed lines indicate the mean values that are used in the projected estimates.
 
-.. grid:: 1 2 2
+.. grid:: 1 2 2 2
    :gutter: 2
 
    .. grid-item::
@@ -59,7 +59,7 @@ As noted, the resource usage for some tasks in the coadd and variability-related
 
 **Figure 2**: CPU time and memory usage for ``assembleDeepCoadd`` and ``measureObjectForced`` for DM-52836.
 
-.. grid:: 1 2 2
+.. grid:: 1 2 2 2
    :gutter: 2
 
    .. grid-item::
