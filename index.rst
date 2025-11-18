@@ -55,7 +55,7 @@ For tasks that do not have significant scaling dependence, we simply use the mea
          :alt: fig_1d
 
 
-As noted, the resource usage for some tasks in the coadd and variability-related processing stages have strong dependence on the number of visits.  In order to model that dependence, we partition the data in bins of numbers of visits, then fit a line to the 95 percentile values in those bins.   This gives us a conservative estimate of the 95 percentile upper envelope of the expected resource needs.   Some of these tasks have strong dependence on numbers of visits for both CPU time and memory, and some just have a strong dependence on just one or the other.  In Figure 2, we show the fitted lines for ``assembleDeepCoadd``, where a # visit-dependence is modeled for both CPU time and memory usage, and for ``measureObjectForced`` where just the CPU time shows a strong dependence on the # visits, whereas for the memory we use a constant value, in this case, the mean value of 1.5 GB.
+As noted, the resource usage for some tasks in the coadd and variability-related processing stages have strong dependence on the number of visits.  In order to model that dependence, we partition the data in bins of numbers of visits, then fit a line to the median values in those bins.  Some of these tasks have strong dependence on numbers of visits for both CPU time and memory, and some just have a strong dependence on just one or the other.  In Figure 2, we show the fitted lines for ``assembleDeepCoadd``, where a # visit-dependence is modeled for both CPU time and memory usage, and for ``measureObjectForced`` where just the CPU time shows a strong dependence on the # visits, whereas for the memory we use a constant value, in this case, the mean value of 1.5 GB.
 
 **Figure 2**: CPU time and memory usage for ``assembleDeepCoadd`` and ``measureObjectForced`` for DM-52836.
 
@@ -79,7 +79,86 @@ Comparison of Projected and Actual Resource Usage
 =================================================
 Here we use a recent intermittent DRP to compare our predicted resource estimates with the actual values.  As inputs to our calculation, we use the metadata and mean storage sizes for the actual DRP run being considered, DM-52836.
 
-In Table 1, we compare the predicted number of jobs from our overlaps-based calcuation with the numbers computed in the QuantumGraph generation step.  In Table 2, we compare the predicted CPU time estimates per task with the actual CPU times as found from the task metadata files.
+In Table 1, we compare the predicted number of jobs from our overlaps-based calcuation with the numbers computed in the QuantumGraph generation step for a representative subset of tasks.  For tasks including and downstream of ``makeDirectWarp``, our overlaps-based calculation over-predicts the numbers of jobs at the ~24% level.
+
+**Table 1**: Number of jobs for selected tasks for DM-52836
+
+.. table:: Number of jobs per task for DM-52836
+   :widths: grid
+
+   +----------------------------+-----------+----------+
+   | task                       | predicted | actual   |
+   +============================+===========+==========+
+   | isr                        | 868438    | 854501   |
+   +----------------------------+-----------+----------+
+   | consolidateVisitSummary    | 4798      | 4721     |
+   +----------------------------+-----------+----------+
+   | associateIsolatedStar      | 383       | 393      |
+   +----------------------------+-----------+----------+
+   | makeDirectWarp             | 2593360   | 2115198  |
+   +----------------------------+-----------+----------+
+   | assembleDeepCoadd          | 153261    | 123369   |
+   +----------------------------+-----------+----------+
+   | makeHealSparsePropertyMaps | 2019      | 1634     |
+   +----------------------------+-----------+----------+
+   | mergeObjectDetection       | 29184     | 26788    |
+   +----------------------------+-----------+----------+
+   | forcedPhotObjectDetector   | 1477196   | 1185206  |
+   +----------------------------+-----------+----------+
+
+
+In Table 2, we compare the predicted CPU time estimates per task with the actual CPU times as found from the task metadata files.
+
+**Table 2**: Predicted and actual CPU times for top 95% of tasks in DM-52836
+
+.. table:: Predicted and actual CPU times in DM-52836
+   :widths: grid
+
+   +--------------------------------+------------+------------+------------+------------+
+   | task                           | predicted  | actual     | ratio      | cumulative |
+   |                                |            |            |            | fraction   |
+   +================================+============+============+============+============+
+   | measureObjectForced            |    2.9e+08 |    3.3e+08 |       1.12 |       0.21 |
+   +--------------------------------+------------+------------+------------+------------+
+   | measureObjectUnforced          |    1.2e+08 |    2.0e+08 |       1.62 |       0.34 |
+   +--------------------------------+------------+------------+------------+------------+
+   | calibrateImage                 |    1.4e+08 |    1.4e+08 |       0.98 |       0.43 |
+   +--------------------------------+------------+------------+------------+------------+
+   | forcedPhotObjectDetector       |    1.2e+08 |    9.8e+07 |       0.80 |       0.49 |
+   +--------------------------------+------------+------------+------------+------------+
+   | isr                            |    8.0e+07 |    7.9e+07 |       0.98 |       0.54 |
+   +--------------------------------+------------+------------+------------+------------+
+   | makePsfMatchedWarp             |    9.6e+07 |    7.8e+07 |       0.82 |       0.59 |
+   +--------------------------------+------------+------------+------------+------------+
+   | makeDirectWarp                 |    9.4e+07 |    7.6e+07 |       0.82 |       0.64 |
+   +--------------------------------+------------+------------+------------+------------+
+   | reprocessVisitImage            |    7.3e+07 |    6.3e+07 |       0.87 |       0.68 |
+   +--------------------------------+------------+------------+------------+------------+
+   | fitDeepCoaddPsfGaussians       |    4.8e+07 |    6.1e+07 |       1.26 |       0.72 |
+   +--------------------------------+------------+------------+------------+------------+
+   | assembleDeepCoadd              |    6.8e+07 |    5.3e+07 |       0.77 |       0.75 |
+   +--------------------------------+------------+------------+------------+------------+
+   | refitPsfModelDetector          |    3.2e+07 |    4.4e+07 |       1.36 |       0.78 |
+   +--------------------------------+------------+------------+------------+------------+
+   | subtractImages                 |    5.5e+07 |    4.3e+07 |       0.78 |       0.81 |
+   +--------------------------------+------------+------------+------------+------------+
+   | assembleCellCoadd              |    4.0e+07 |    3.6e+07 |       0.90 |       0.83 |
+   +--------------------------------+------------+------------+------------+------------+
+   | detectAndMeasureDiaSource      |    4.3e+07 |    3.4e+07 |       0.78 |       0.85 |
+   +--------------------------------+------------+------------+------------+------------+
+   | rewarpTemplate                 |    3.8e+07 |    3.0e+07 |       0.79 |       0.87 |
+   +--------------------------------+------------+------------+------------+------------+
+   | deblendCoaddFootprints         |    3.1e+07 |    2.6e+07 |       0.85 |       0.89 |
+   +--------------------------------+------------+------------+------------+------------+
+   | deconvolve                     |    3.4e+07 |    2.6e+07 |       0.77 |       0.91 |
+   +--------------------------------+------------+------------+------------+------------+
+   | fitDeblendedObjectsExp         |    2.2e+07 |    2.4e+07 |       1.10 |       0.92 |
+   +--------------------------------+------------+------------+------------+------------+
+   | forcedPhotDiaObjectDetector    |    2.5e+07 |    2.0e+07 |       0.80 |       0.94 |
+   +--------------------------------+------------+------------+------------+------------+
+   | fitDeblendedObjectsSersic      |    1.7e+07 |    1.8e+07 |       1.11 |       0.95 |
+   +--------------------------------+------------+------------+------------+------------+
+
 
 
 Wall Time Considerations
@@ -89,7 +168,7 @@ The measured wall times for some jobs can be substantially larger than the CPU t
 
 Predictions for DP2
 ===================
-These estimates use the DRP.yaml pipeline definition in ``w_2025_43``, and are based on resource usage data from DM-52836.   The input observations are a selection of science observations using LSSTCam, extracted from the consolidated database (consdb).  The query used for the selection is shown below.  For computing the number of datasets per dataset type and information such as the number of visits per patch per band, the ``lsst_cells_v1`` skymap was used.
+These estimates use the DRP.yaml pipeline definition in ``w_2025_41``, and are based on resource usage data from DM-52836.   The input observations are a selection of science observations using LSSTCam, extracted from the consolidated database (consdb).  The query used for the selection is shown below.  For computing the number of datasets per dataset type and information such as the number of visits per patch per band, the ``lsst_cells_v1`` skymap was used.
 
 Storage by Dataset Type
 ^^^^^^^^^^^^^^^^^^^^^^^
